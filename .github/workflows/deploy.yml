@@ -22,7 +22,7 @@ on:
             default: todoapp
 jobs:
     deploy-helm:
-        environment: dev
+        environment: ${{ inputs.environment }}
         runs-on: ubuntu-latest
 
         steps:
