@@ -15,7 +15,7 @@ on:
             required: false
             description: Path to helm values file
             type: string
-            default: ./todoapp/values.yaml
+            default: ./helm-charts/todoapp/values.yaml
         helm-release-name:
             description: Helm release name
             type: string
@@ -28,17 +28,6 @@ jobs:
         steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Download helm package
-          uses: actions/download-artifact@v4
-          with:
-            name: helm-package
-            path: .
-
-        - name: Download helm artifacts
-          uses: actions/download-artifact@v4
-          with:
-            name: helm-artifacts
-            path: .
 
         - name: Create k8s Kind Cluster
           uses: helm/kind-action@v1
@@ -59,7 +48,7 @@ jobs:
 
         - name: Helm upgrade release
           run: |
-            helm upgrade --install --atomic --wait --timeout 3600s --debug ${{ inputs.helm-release-name }} ./todoapp-*.tgz \
+            helm upgrade --install --atomic --wait --timeout 3600s --debug ${{ inputs.helm-release-name }} ./helm-charts/todoapp \
             -f ${{ inputs.helm-values-path }} \
             --set mysql.secrets.MYSQL_ROOT_PASSWORD="${{ secrets.MYSQL_ROOT_PASSWORD }}" \
             --set mysql.secrets.MYSQL_USER="${{ secrets.MYSQL_USER }}" \
