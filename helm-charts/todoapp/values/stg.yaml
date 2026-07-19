@@ -2,6 +2,8 @@ todoapp:
   namespace: todoapp-stg
   image:
     repository: ikulyk404/todoapp
+  nodeport:
+    port: 30008
 mysql:
   namespace: mysql-stg
 

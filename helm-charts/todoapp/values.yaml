@@ -18,6 +18,9 @@ todoapp:
       memory: "256Mi"
       cpu: "150m"
 
+  nodeport:
+    port: 30007
+
   secrets:
     SECRET_KEY: zdfsadfsadfsfs
     DB_NAME: app_db
