@@ -26,8 +26,6 @@ jobs:
         runs-on: ubuntu-latest
 
         steps:
-        - name: Checkout
-          uses: actions/checkout@v4
         - name: Download helm package
           uses: actions/download-artifact@v4
           with:
@@ -55,11 +53,7 @@ jobs:
 
         - name: Helm install release
           run: |
-            helm install ${{ inputs.helm-release-name }} ./helm-charts/todoapp --dry-run
-
-        - name: Helm upgrade release
-          run: |
-            helm upgrade --install --atomic --wait --timeout 3600s --debug ${{ inputs.helm-release-name }} ./todoapp-*.tgz \
+            helm install ${{ inputs.helm-release-name }} ./todoapp --dry-run \
             -f ${{ inputs.helm-values-path }} \
             --set mysql.secrets.MYSQL_ROOT_PASSWORD="${{ secrets.MYSQL_ROOT_PASSWORD }}" \
             --set mysql.secrets.MYSQL_USER="${{ secrets.MYSQL_USER }}" \
@@ -68,4 +62,19 @@ jobs:
             --set todoapp.secrets.DB_NAME="${{ secrets.DB_NAME }}" \
             --set todoapp.secrets.DB_USER="${{ secrets.DB_USER }}" \
             --set todoapp.secrets.DB_PASSWORD="${{ secrets.DB_PASSWORD }}" \
-            --set todoapp.secrets.DB_HOST="${{ secrets.DB_HOST }}"
+            --set todoapp.secrets.DB_HOST="${{ secrets.DB_HOST }}" \
+            --set todoapp.image.tag="${{ inputs.version }}"
+
+        - name: Helm upgrade release
+          run: |
+            helm upgrade --install --atomic --wait --timeout 300s --debug ${{ inputs.helm-release-name }} ./todoapp-*.tgz \
+            -f ${{ inputs.helm-values-path }} \
+            --set mysql.secrets.MYSQL_ROOT_PASSWORD="${{ secrets.MYSQL_ROOT_PASSWORD }}" \
+            --set mysql.secrets.MYSQL_USER="${{ secrets.MYSQL_USER }}" \
+            --set mysql.secrets.MYSQL_PASSWORD="${{ secrets.MYSQL_PASSWORD }}" \
+            --set todoapp.secrets.SECRET_KEY="${{ secrets.SECRET_KEY }}" \
+            --set todoapp.secrets.DB_NAME="${{ secrets.DB_NAME }}" \
+            --set todoapp.secrets.DB_USER="${{ secrets.DB_USER }}" \
+            --set todoapp.secrets.DB_PASSWORD="${{ secrets.DB_PASSWORD }}" \
+            --set todoapp.secrets.DB_HOST="${{ secrets.DB_HOST }}" \
+            --set todoapp.image.tag="${{ inputs.version }}"
